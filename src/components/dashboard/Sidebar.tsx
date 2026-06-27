@@ -8,7 +8,8 @@ import {
   Building2,
   CalendarDays,
   MessageSquare,
-  Star,
+  Heart,
+  Bell,
   CreditCard,
   User,
   Menu,
@@ -34,6 +35,8 @@ const navItems = [
   { href: "/dashboard/viajes", label: "Mis viajes", icon: Building2 },
   { href: "/dashboard/mensajes", label: "Mensajes", icon: MessageSquare },
   { href: "/dashboard/calendario", label: "Calendario", icon: CalendarDays },
+  { href: "/dashboard/favoritos", label: "Favoritos", icon: Heart },
+  { href: "/dashboard/notificaciones", label: "Notificaciones", icon: Bell },
   { href: "/dashboard/pagos", label: "Pagos", icon: CreditCard },
   { href: "/dashboard/perfil", label: "Perfil", icon: User },
 ];
