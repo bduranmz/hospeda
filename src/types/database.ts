@@ -429,6 +429,94 @@ export const PROPERTY_STATUS_LABELS: Record<PropertyStatus, string> = {
   archived: "Archivada",
 };
 
+// ---------------------------------------------------------------------------
+// DISPUTES
+// ---------------------------------------------------------------------------
+
+export type DisputeStatus =
+  | "open"
+  | "under_review"
+  | "resolved_guest_favor"
+  | "resolved_host_favor"
+  | "resolved_partial"
+  | "closed";
+
+export type DisputeReason =
+  | "property_not_as_described"
+  | "cleanliness"
+  | "unauthorized_charges"
+  | "host_unresponsive"
+  | "guest_damage"
+  | "payment_issue"
+  | "cancellation_dispute"
+  | "other";
+
+export interface Dispute {
+  id: string;
+  reservation_id: string;
+  complainant_id: string;
+  respondent_id: string;
+  reason: DisputeReason | string;
+  description: string;
+  evidence_urls: string[];
+  status: DisputeStatus;
+  refund_percentage: number | null;
+  admin_notes: string | null;
+  resolved_by: string | null;
+  resolved_at: string | null;
+  escalated_at: string | null;
+  escalate_after: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DisputeMessage {
+  id: string;
+  dispute_id: string;
+  sender_id: string;
+  message: string;
+  evidence_urls: string[];
+  is_admin_message: boolean;
+  created_at: string;
+}
+
+export const DISPUTE_STATUS_LABELS: Record<DisputeStatus, string> = {
+  open: "Abierta",
+  under_review: "En revisión",
+  resolved_guest_favor: "Resuelta a favor del huésped",
+  resolved_host_favor: "Resuelta a favor del anfitrión",
+  resolved_partial: "Resuelta parcialmente",
+  closed: "Cerrada",
+};
+
+export const DISPUTE_REASON_LABELS: Record<string, string> = {
+  property_not_as_described: "Propiedad no es como se describe",
+  cleanliness: "Problemas de limpieza",
+  unauthorized_charges: "Cobros no autorizados",
+  host_unresponsive: "Anfitrión no responde",
+  guest_damage: "Daños causados por huésped",
+  payment_issue: "Problema con el pago",
+  cancellation_dispute: "Disputa por cancelación",
+  other: "Otro",
+};
+
+// ---------------------------------------------------------------------------
+// IDENTITY VERIFICATION (extended labels)
+// ---------------------------------------------------------------------------
+
+export const IDENTITY_STATUS_LABELS: Record<IdentityStatus, string> = {
+  pending: "En revisión",
+  approved: "Verificado",
+  rejected: "Rechazado",
+  expired: "Expirado",
+};
+
+export const IDENTITY_DOCUMENT_TYPE_LABELS: Record<IdentityDocumentType, string> = {
+  rut: "Cédula de Identidad (RUT)",
+  passport: "Pasaporte",
+  foreign_id: "Documento de identidad extranjero",
+};
+
 export const RESERVATION_STATUS_LABELS: Record<ReservationStatus, string> = {
   pending_approval: "Pendiente de aprobación",
   approved: "Aprobada",

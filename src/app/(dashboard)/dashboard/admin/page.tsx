@@ -1,5 +1,6 @@
 import { getAdminStats, getAdminUsers, getAdminProperties, getAdminReservations } from "@/lib/actions/admin";
-import { Users, Building2, CalendarDays, DollarSign, Shield } from "lucide-react";
+import Link from "next/link";
+import { Users, Building2, CalendarDays, DollarSign, Shield, ShieldCheck, AlertTriangle } from "lucide-react";
 import { redirect } from "next/navigation";
 
 const VERIFICATION_LABELS: Record<string, { label: string; color: string }> = {
@@ -55,6 +56,16 @@ export default async function AdminPage() {
             </div>
           );
         })}
+      </div>
+
+      {/* Quick links */}
+      <div className="flex gap-3 mb-8">
+        <Link href="/dashboard/admin/verificaciones" className="flex items-center gap-2 bg-white border border-gray-100 rounded-xl px-4 py-3 shadow-sm hover:border-teal-200 transition-colors text-sm font-medium text-gray-700">
+          <ShieldCheck size={16} className="text-teal-600" /> Verificaciones
+        </Link>
+        <Link href="/dashboard/admin/disputas" className="flex items-center gap-2 bg-white border border-gray-100 rounded-xl px-4 py-3 shadow-sm hover:border-amber-200 transition-colors text-sm font-medium text-gray-700">
+          <AlertTriangle size={16} className="text-amber-500" /> Disputas
+        </Link>
       </div>
 
       {/* Users table */}

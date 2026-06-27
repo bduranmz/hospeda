@@ -175,6 +175,114 @@ export async function getPlatformSettings() {
   return settings;
 }
 
+// ---------------------------------------------------------------------------
+// Admin verifications
+// ---------------------------------------------------------------------------
+
+export async function getAdminVerifications(page = 1, perPage = 20) {
+  const { error, supabase } = await requireAdmin();
+  if (error || !supabase) return { data: [], count: 0 };
+
+  const from = (page - 1) * perPage;
+  const to = from + perPage - 1;
+
+  const { data, count } = await supabase
+    .from("identity_verifications")
+    .select(`
+      id, document_type, document_number, status, submitted_at, reviewed_at, rejection_reason,
+      profiles!identity_verifications_user_id_fkey(full_name, verification_status)
+    `, { count: "exact" })
+    .order("submitted_at", { ascending: false })
+    .range(from, to);
+
+  return { data: data ?? [], count: count ?? 0 };
+}
+
+export async function adminReviewVerification(
+  verificationId: string,
+  action: "approve" | "reject",
+  rejectionReason?: string
+) {
+  const { error, supabase, user } = await requireAdmin();
+  if (error || !supabase || !user) return { error: "No autorizado" };
+
+  const { data: verification } = await supabase
+    .from("identity_verifications")
+    .select("user_id")
+    .eq("id", verificationId)
+    .single();
+
+  if (!verification) return { error: "Verificacion no encontrada" };
+
+  const { error: updateError } = await supabase
+    .from("identity_verifications")
+    .update({
+      status: action === "approve" ? "approved" : "rejected",
+      reviewed_at: new Date().toISOString(),
+      reviewed_by: user.id,
+      rejection_reason: action === "reject" ? rejectionReason : null,
+    })
+    .eq("id", verificationId);
+
+  if (updateError) return { error: updateError.message };
+
+  if (action === "approve") {
+    await supabase
+      .from("profiles")
+      .update({ verification_status: "identity_verified" })
+      .eq("id", verification.user_id);
+  }
+
+  return { success: true };
+}
+
+// ---------------------------------------------------------------------------
+// Admin disputes
+// ---------------------------------------------------------------------------
+
+export async function getAdminDisputes(page = 1, perPage = 20) {
+  const { error, supabase } = await requireAdmin();
+  if (error || !supabase) return { data: [], count: 0 };
+
+  const from = (page - 1) * perPage;
+  const to = from + perPage - 1;
+
+  const { data, count } = await supabase
+    .from("disputes")
+    .select(`
+      id, reason, status, priority, created_at, resolved_at, resolution,
+      reservations(id, check_in, check_out, properties(title)),
+      profiles!disputes_complainant_id_fkey(full_name)
+    `, { count: "exact" })
+    .order("created_at", { ascending: false })
+    .range(from, to);
+
+  return { data: data ?? [], count: count ?? 0 };
+}
+
+export async function adminResolveDispute(
+  disputeId: string,
+  resolution: string,
+  refundPercent: number
+) {
+  const { error, supabase, user } = await requireAdmin();
+  if (error || !supabase || !user) return { error: "No autorizado" };
+
+  const { error: updateError } = await supabase
+    .from("disputes")
+    .update({
+      status: "resolved",
+      resolution,
+      refund_amount: refundPercent,
+      resolved_at: new Date().toISOString(),
+      resolved_by: user.id,
+    })
+    .eq("id", disputeId);
+
+  if (updateError) return { error: updateError.message };
+  return { success: true };
+}
+
 export async function updatePlatformSetting(key: string, value: unknown) {
   const { error, supabase, user } = await requireAdmin();
   if (error || !supabase || !user) return { error: "No autorizado" };

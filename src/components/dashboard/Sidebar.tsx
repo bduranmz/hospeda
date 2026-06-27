@@ -38,6 +38,7 @@ const navItems = [
   { href: "/dashboard/favoritos", label: "Favoritos", icon: Heart },
   { href: "/dashboard/notificaciones", label: "Notificaciones", icon: Bell },
   { href: "/dashboard/pagos", label: "Pagos", icon: CreditCard },
+  { href: "/dashboard/banco", label: "Datos bancarios", icon: Building2 },
   { href: "/dashboard/perfil", label: "Perfil", icon: User },
 ];
 

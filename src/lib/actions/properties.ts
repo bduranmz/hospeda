@@ -123,6 +123,79 @@ export async function updatePropertyStatus(
   return { success: true };
 }
 
+export async function getPropertyForEdit(propertyId: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return { error: "No autenticado" };
+
+  const { data, error } = await supabase
+    .from("properties")
+    .select("*")
+    .eq("id", propertyId)
+    .eq("host_id", user.id)
+    .is("deleted_at", null)
+    .single();
+
+  if (error || !data) return { error: "Propiedad no encontrada" };
+  return { property: data };
+}
+
+export async function updateProperty(
+  propertyId: string,
+  formData: PropertyFormData
+) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return { error: "No autenticado" };
+
+  const { data: property } = await supabase
+    .from("properties")
+    .select("host_id")
+    .eq("id", propertyId)
+    .single();
+
+  if (!property || property.host_id !== user.id) {
+    return { error: "No autorizado" };
+  }
+
+  const { error } = await supabase
+    .from("properties")
+    .update({
+      title: formData.title,
+      description: formData.description,
+      property_type: formData.property_type,
+      space_type: formData.space_type,
+      address: formData.address,
+      max_guests: formData.max_guests,
+      bedrooms: formData.bedrooms,
+      beds: formData.beds,
+      bathrooms: formData.bathrooms,
+      amenities: formData.amenities,
+      base_price: formData.base_price,
+      weekend_price: formData.weekend_price,
+      cleaning_fee: formData.cleaning_fee,
+      security_deposit: formData.security_deposit,
+      rules: formData.rules,
+      cancellation_policy: formData.cancellation_policy,
+      instant_booking: formData.instant_booking,
+      min_nights: formData.min_nights,
+      max_nights: formData.max_nights,
+      check_in_time: formData.check_in_time,
+      check_out_time: formData.check_out_time,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", propertyId);
+
+  if (error) return { error: error.message };
+  return { success: true };
+}
+
 export async function deleteProperty(propertyId: string) {
   const supabase = await createClient();
   const {
