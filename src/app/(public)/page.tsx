@@ -17,6 +17,9 @@ import {
   Flame,
   Umbrella,
   CheckCircle2,
+  Compass,
+  Heart,
+  MessageCircle,
 } from "lucide-react";
 
 /* ── Data ─────────────────────────────────────────────── */
@@ -240,6 +243,135 @@ export default function HomePage() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Community experiences ────────────────────── */}
+      <section className="py-20 sm:py-24 px-4 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Compass className="w-6 h-6 text-teal-600" />
+                <span className="text-sm font-semibold text-teal-600 uppercase tracking-wider">
+                  Comunidad
+                </span>
+              </div>
+              <h2 className="font-heading text-2xl sm:text-3xl font-bold text-gray-900">
+                Experiencias de viajeros
+              </h2>
+              <p className="mt-2 text-gray-500">
+                Descubre lo que otros viajeros viven en Chile.
+              </p>
+            </div>
+            <Link
+              href="/explorar"
+              className="hidden sm:inline-flex items-center gap-1 text-sm font-semibold text-teal-600 hover:text-teal-700 transition-colors"
+            >
+              Ver todas <ArrowRight size={16} />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              {
+                title: "Amanecer en el desierto de Atacama",
+                author: "Camila V.",
+                location: "San Pedro de Atacama",
+                text: "Ver las estrellas y despertar con el amanecer en el desierto fue una experiencia que no tiene precio. El hospedaje era sencillo pero perfecto para desconectar.",
+                rating: 5,
+                likes: 42,
+                comments: 8,
+                img: "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600&h=400&fit=crop",
+                tags: ["desierto", "aventura", "naturaleza"],
+              },
+              {
+                title: "Fin de semana en cabana con vista al lago",
+                author: "Martin R.",
+                location: "Pucon",
+                text: "Escapada perfecta de fin de semana. La cabana tenia todo lo necesario, chimenea incluida. El lago Villarrica al atardecer es impresionante.",
+                rating: 5,
+                likes: 38,
+                comments: 5,
+                img: "https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=600&h=400&fit=crop",
+                tags: ["cabana", "lago", "relax"],
+              },
+              {
+                title: "Recorriendo los cerros de Valparaiso",
+                author: "Sofia L.",
+                location: "Valparaiso",
+                text: "Los colores, el arte callejero, la comida... Valparaiso es una ciudad que se vive caminando. Nuestro depto estaba en el cerro Alegre, ubicacion inmejorable.",
+                rating: 4,
+                likes: 27,
+                comments: 12,
+                img: "https://images.unsplash.com/photo-1594498653385-d5172c532c00?w=600&h=400&fit=crop",
+                tags: ["ciudad", "gastronomia", "pareja"],
+              },
+            ].map((exp) => (
+              <div
+                key={exp.title}
+                className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+              >
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  <img
+                    src={exp.img}
+                    alt={exp.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg flex items-center gap-1">
+                    <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                    <span className="text-sm font-medium">{exp.rating}</span>
+                  </div>
+                </div>
+                <div className="p-5">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-6 h-6 rounded-full bg-teal-100 flex items-center justify-center text-teal-700 text-xs font-bold">
+                      {exp.author[0]}
+                    </div>
+                    <span className="text-sm text-gray-600">{exp.author}</span>
+                    <span className="text-xs text-gray-400 flex items-center gap-1">
+                      <MapPin className="w-3 h-3" />
+                      {exp.location}
+                    </span>
+                  </div>
+                  <h3 className="font-heading font-semibold text-gray-900 mb-2 line-clamp-1">
+                    {exp.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 line-clamp-2 mb-3">{exp.text}</p>
+                  <div className="flex flex-wrap gap-1.5 mb-3">
+                    {exp.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="text-xs text-teal-600 bg-teal-50 px-2 py-0.5 rounded-full"
+                      >
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-4 pt-3 border-t text-sm text-gray-500">
+                    <span className="flex items-center gap-1">
+                      <Heart className="w-4 h-4" />
+                      {exp.likes}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <MessageCircle className="w-4 h-4" />
+                      {exp.comments}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 text-center">
+            <Link
+              href="/explorar"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-xl font-medium hover:bg-teal-700 transition shadow-lg shadow-teal-600/20"
+            >
+              <Compass className="w-4 h-4" />
+              Explorar mas experiencias
+            </Link>
           </div>
         </div>
       </section>

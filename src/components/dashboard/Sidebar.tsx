@@ -15,6 +15,7 @@ import {
   Menu,
   X,
   LogOut,
+  Compass,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -33,6 +34,7 @@ const navItems = [
   { href: "/dashboard/propiedades", label: "Mis propiedades", icon: Building2 },
   { href: "/dashboard/reservas", label: "Reservas", icon: CalendarDays },
   { href: "/dashboard/viajes", label: "Mis viajes", icon: Building2 },
+  { href: "/dashboard/experiencias/nueva", label: "Compartir experiencia", icon: Compass },
   { href: "/dashboard/mensajes", label: "Mensajes", icon: MessageSquare },
   { href: "/dashboard/calendario", label: "Calendario", icon: CalendarDays },
   { href: "/dashboard/favoritos", label: "Favoritos", icon: Heart },

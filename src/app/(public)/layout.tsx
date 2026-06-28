@@ -39,6 +39,12 @@ function Navbar() {
             href="/propiedades"
             className="text-sm font-medium text-gray-600 hover:text-teal-600 transition-colors px-4 py-2 rounded-xl hover:bg-teal-50"
           >
+            Propiedades
+          </Link>
+          <Link
+            href="/explorar"
+            className="text-sm font-medium text-gray-600 hover:text-teal-600 transition-colors px-4 py-2 rounded-xl hover:bg-teal-50"
+          >
             Explorar
           </Link>
           <Link
@@ -74,7 +80,8 @@ function Navbar() {
       {/* Mobile menu */}
       {mobileOpen && (
         <div className="md:hidden border-t border-gray-100 bg-white px-4 pb-4 pt-2 space-y-1">
-          <Link href="/propiedades" className="block text-sm font-medium text-gray-700 px-3 py-2.5 rounded-xl hover:bg-teal-50">Explorar</Link>
+          <Link href="/propiedades" className="block text-sm font-medium text-gray-700 px-3 py-2.5 rounded-xl hover:bg-teal-50">Propiedades</Link>
+          <Link href="/explorar" className="block text-sm font-medium text-gray-700 px-3 py-2.5 rounded-xl hover:bg-teal-50">Explorar</Link>
           <Link href="/dashboard/propiedades/nueva" className="block text-sm font-medium text-gray-700 px-3 py-2.5 rounded-xl hover:bg-teal-50">Publicar</Link>
           <div className="border-t border-gray-100 my-2" />
           <Link href="/login" className="block text-sm font-medium text-gray-700 px-3 py-2.5 rounded-xl hover:bg-gray-50">Inicia sesion</Link>
@@ -110,6 +117,7 @@ function Footer() {
               <li><Link href="/propiedades" className="hover:text-teal-600 transition-colors">Propiedades</Link></li>
               <li><Link href="/propiedades?type=cabana" className="hover:text-teal-600 transition-colors">Cabanas</Link></li>
               <li><Link href="/propiedades?type=departamento" className="hover:text-teal-600 transition-colors">Departamentos</Link></li>
+              <li><Link href="/explorar" className="hover:text-teal-600 transition-colors">Experiencias</Link></li>
             </ul>
           </div>
 
