@@ -63,6 +63,20 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // Skip Supabase if env vars are not configured yet
+  if (
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  ) {
+    // Block dashboard without auth
+    if (pathname.startsWith("/dashboard")) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/login";
+      return NextResponse.redirect(url);
+    }
+    return NextResponse.next();
+  }
+
   // Supabase session refresh + auth-guard for /dashboard routes
   return await updateSession(request);
 }

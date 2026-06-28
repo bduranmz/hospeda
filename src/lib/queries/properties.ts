@@ -16,7 +16,7 @@ export interface PropertySearchParams {
   instantBooking?: boolean;
   page?: number;
   perPage?: number;
-  sortBy?: "price_asc" | "price_desc" | "newest" | "rating";
+  sortBy?: "price_asc" | "price_desc" | "newest" | "rating" | "relevance";
 }
 
 export interface PropertySearchResult {
@@ -38,6 +38,7 @@ export interface PropertySearchResult {
   host_avatar: string | null;
   avg_rating: number | null;
   total_reviews: number;
+  quality_score: number;
 }
 
 const PER_PAGE = 20;
@@ -52,9 +53,9 @@ export async function searchProperties(params: PropertySearchParams) {
     .from("properties")
     .select(
       `
-      id, title, property_type, space_type,
+      id, title, description, property_type, space_type,
       base_price, cleaning_fee, max_guests, bedrooms, beds, bathrooms,
-      amenities, instant_booking, address,
+      amenities, instant_booking, address, host_verified,
       property_photos!inner ( url ),
       profiles!properties_host_id_fkey ( full_name, avatar_url ),
       reviews ( rating )
@@ -133,6 +134,25 @@ export async function searchProperties(params: PropertySearchParams) {
     const coverPhoto = p.property_photos?.[0]?.url ?? null;
     const host = p.profiles;
 
+    // Quality score (0-100): determines visibility ranking
+    // Higher score = appears higher in results
+    const hasPhotos = p.property_photos?.length > 0;
+    const photoCount = p.property_photos?.length ?? 0;
+    const hasDescription = (p.description?.length ?? 0) > 50;
+    const amenityCount = p.amenities?.length ?? 0;
+    const reviewCount = reviews.length;
+    const rating = avgRating ?? 0;
+
+    const qualityScore =
+      (hasPhotos ? 15 : 0) +                          // Has at least 1 photo
+      Math.min(photoCount, 5) * 3 +                    // Up to 5 photos = 15pts
+      (hasDescription ? 10 : 0) +                      // Has description
+      Math.min(amenityCount, 10) * 1 +                  // Up to 10 amenities = 10pts
+      Math.min(reviewCount, 20) * 1 +                   // Up to 20 reviews = 20pts
+      (rating >= 4.5 ? 20 : rating >= 4.0 ? 15 : rating >= 3.5 ? 10 : rating > 0 ? 5 : 0) + // Rating tier
+      (p.instant_booking ? 5 : 0) +                     // Instant booking bonus
+      (p.host_verified ? 5 : 0);                        // Verified host bonus
+
     return {
       id: p.id,
       title: p.title,
@@ -155,8 +175,24 @@ export async function searchProperties(params: PropertySearchParams) {
       host_avatar: host?.avatar_url ?? null,
       avg_rating: avgRating ? Math.round(avgRating * 10) / 10 : null,
       total_reviews: reviews.length,
+      quality_score: qualityScore,
     };
   });
+
+  // When sorting by rating or default (newest), apply quality score as tiebreaker
+  // This pushes low-quality listings down without hiding them
+  if (params.sortBy === "rating" || params.sortBy === "relevance" || !params.sortBy) {
+    properties.sort((a, b) => {
+      if (params.sortBy === "rating") {
+        // Primary: rating desc, secondary: quality score
+        const ratingDiff = (b.avg_rating ?? 0) - (a.avg_rating ?? 0);
+        return ratingDiff !== 0 ? ratingDiff : b.quality_score - a.quality_score;
+      }
+      // For newest (default), use quality score as secondary sort
+      // DB already sorted by published_at, so we just boost high-quality ones slightly
+      return b.quality_score - a.quality_score;
+    });
+  }
 
   return {
     properties,
